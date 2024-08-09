@@ -1,5 +1,6 @@
 import React from 'react';
 import { Node } from '@antv/x6';
+import { Badge } from 'antd';
 import classNames from 'classnames';
 import { NODE_TYPE_INTERMEDIATE_END, NodeTypeEnum, ConditionTypeEnum } from '../../constant';
 import { getIconByType } from '../../cells';
@@ -11,6 +12,13 @@ const NodeBadge: React.FC<{ node: Node }> = (props) => {
   let badge = null
   if (model) {
     const currentModel = model.proxy || model;
+    if (model.extensions > 0 ) {
+      badge = (
+        <Badge count={model.extensions} size='small'>
+          <div className={classNames(styles.liteflowShapeBadgeWrapper)}></div>
+        </Badge>
+      );
+    }
     if (
       currentModel.type !== node.shape &&
       currentModel.type !== NodeTypeEnum.COMMON &&

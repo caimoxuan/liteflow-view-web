@@ -2,12 +2,12 @@ import { defineConfig } from 'dumi';
 
 export default defineConfig({
   favicons: [
-    'https://liteflow.cc/img/logo.png',
+    '/images/favicon.png',
   ],
   outputPath: 'docs-dist',
   themeConfig: {
     name: 'liteflow',
-    logo: 'https://liteflow.cc/img/logo.png',
+    logo: '/images/favicon.png',
     footer: `Open-source MIT Licensed | Copyright © 2024-present
 <br />
 Powered by self`,

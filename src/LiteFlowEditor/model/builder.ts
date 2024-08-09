@@ -135,16 +135,18 @@ export function parse({ parent, data }: ParseParameters): ELNode | undefined {
       return parseOperator({ parent: new OrOperator(parent), data });
     case ConditionTypeEnum.NOT:
       return parseOperator({ parent: new NotOperator(parent), data });
-
     // 2、组件类：顺序、分支、循环
     case NodeTypeEnum.COMMON:
     default:
-      return new NodeOperator(parent, data.type, data.id, data.properties);
+      let node = new NodeOperator(parent, data.type, data.id, data.properties);
+      node.setExtensions(data.extensionCount);
+      return node;
   }
 }
 
 function parseOperator({ parent, data }: ParseParameters): ELNode {
-  const { condition, children = [], properties } = data;
+  const { condition, children = [], properties, extensionCount } = data;
+  parent.setExtensions(extensionCount || 0);
   if (condition) {
     const conditionNode = parse({ parent, data: condition });
     if (conditionNode) {

@@ -40,6 +40,8 @@ export default abstract class ELNode {
   public condition?: ELNode;
   // 组件节点的id
   public id?: string;
+  // 扩展点数量
+  public extensions?: number;
   // 编排节点的属性：可以设置id/tag等等
   public properties?: Properties;
   // 当前节点的X6 Cell内容
@@ -322,6 +324,32 @@ export default abstract class ELNode {
   public setProperties(properties: Properties): void {
     this.properties = properties;
   }
+
+  /**
+   * 设置扩展点数量
+   * @param points 点数
+   */
+  public setExtensions(points: number): void {
+    this.extensions = points;
+  }
+
+  /**
+   * 获取扩展点数量
+   * @returns number
+   */
+  public getExtensions(): number {
+    return this.extensions || 0;
+  }
+
+
+  /**
+   * 设置节点id
+   * @param id 节点id
+   */
+  public setId(id: string): void {
+    this.id = id
+  }
+
 
   /**
    * 获取属性的EL表达式
