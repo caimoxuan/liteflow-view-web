@@ -38,3 +38,25 @@ export function getRequest(url: string) : Promise<any> {
         })
     }) 
 }
+
+export function doRequest(url: string, method: string, param: any) : Promise<any> {
+    let header = {
+        "Content-Type": "application/json",
+    }
+    return new Promise((resolve, reject) => {
+        axios.request({
+            url: url,
+            method: method,
+            data: param,
+            headers: header,
+        }).then(res => {
+            if (res.status === 200) {
+                resolve(res.data);
+            } else {
+                reject(res.statusText);
+            }
+        }).catch(err => {
+            reject(err);
+        })
+    })
+}

@@ -85,10 +85,11 @@
     "@antv/x6": "^1.7.12",
     "@antv/x6-react-components": "^1.1.15",
     "@antv/x6-react-shape": "^1.6.0",
+    "@uiw/react-codemirror": "^4.23.0",
     "antd": "^4.5.3",
     "axios": "^1.7.3",
-    "react": "17.x",
-    "react-dom": "17.x",
+    "react": ">=16.9.0",
+    "react-dom": ">=16.9.0",
     "react-json-view": "^1.19.1"
   }
 }
