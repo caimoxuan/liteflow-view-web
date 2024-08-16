@@ -9,6 +9,7 @@
 
 # production
 /dist
+/docs-dist
 /es
 
 # misc

@@ -4,8 +4,9 @@ import { debounce, update } from 'lodash';
 import { history } from '../../../hooks/useHistory';
 import ELNode from '../../../model/node';
 import styles from './index.module.less';
-import { getRequest, doRequest } from "../../../utils/httpUtils"
+import {  getExtensionDetail, getNodeDetail, updateExtension, createExtension } from "../../../constant/api/index"
 import CodeMirror from '@uiw/react-codemirror'
+import {formatter, placeholderScript } from '../../../constant/script'
 
 interface IProps {
   model: ELNode;
@@ -45,11 +46,17 @@ const ComponentPropertiesEditor: React.FC<IProps> = (props) => {
   const lanChange = (value: string) => {
     let updateExtension = currentExtension;
     updateExtension.scriptType = value;
-    setCurrentExtension(updateExtension);
+    // 格式化默认代码
+    let code = placeholderScript[value];
+    if (code) {
+      let name = currentExtension.extCode + "_" + currentExtension.bizCode;
+      code = formatter(code, name);
+      updateExtension.scriptText = code;
+    }
+    setCurrentExtension({...updateExtension});
   }
 
   const operatorExtensionInfo = () => {
-    let method: string = shouldUpdate ? "PUT" : "POST";
     console.log(currentExtension);
     if (!currentExtension) {
       return;
@@ -62,23 +69,32 @@ const ComponentPropertiesEditor: React.FC<IProps> = (props) => {
         scriptType: currentExtension.scriptType || 'lua',
       }
     }
-    doRequest("http://localhost:10005/v1/liteflow/api/extensionScript", method, data).then((res) => {
-      extensionInfoDrawerClose();
-    }).catch(err => {
-      console.log(err);
-      messageApi.error("操作扩展点失败:" + err.response?.data?.message);
-    })
+    if (shouldUpdate) {
+      updateExtension(data).then((res) => {
+        extensionInfoDrawerClose();
+      }).catch(err => {
+        console.log(err);
+        messageApi.error("修改扩展点失败:" + err.response?.data?.message);
+      })
+    } else {
+      createExtension(data).then((res) => {
+        extensionInfoDrawerClose();
+      }).catch(err => {
+        console.log(err);
+        messageApi.error("新增扩展点失败:" + err.response?.data?.message);
+      })
+    }
   }
 
   // 扩展点信息加载
   const loadExtensionInfo = (loadKey: string) => {
-    getRequest("http://localhost:10005/v1/liteflow/api/extensionDetail?bizCode=" + loadKey + "&extCode=" + currentExtension.extCode).then((res) => {
+    getExtensionDetail({bizCode: loadKey, extCode: currentExtension.extCode}).then((res) => {
       setCurrentExtension({
         bizCode: res.bizCode,
         extCode: res.extensionInfo?.extCode,
         extDesc: currentExtension.extDesc,
         scriptText: res.scriptText || '',
-        scriptType: res.scriptType,
+        scriptType: res.scriptType || 'lua',
       })
       setShouldUpdate(res.scriptText ? true : false);
     }).catch(err => {
@@ -109,7 +125,7 @@ const ComponentPropertiesEditor: React.FC<IProps> = (props) => {
 
   useEffect(() => {
     if (model.getExtensions() > 0) {
-      getRequest("http://localhost:10005/v1/liteflow/api/nodeDetail?nodeId=" + model.id).then((res) => {
+      getNodeDetail({nodeId: model.id}).then((res) => {
         setExtensionInfos(res.extensions);
       }).catch(err => {
         console.log(err);
@@ -162,9 +178,10 @@ const ComponentPropertiesEditor: React.FC<IProps> = (props) => {
             height='600px'
             theme={'dark'}
             onChange={(value, viewupdate) => {
-              let updateData = currentExtension;
-              updateData.scriptText = value;
-              setCurrentExtension(updateData);
+              setCurrentExtension({
+                ...currentExtension,
+                scriptTxt: value
+              });
             }}
           />
           <Select

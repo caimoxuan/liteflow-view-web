@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Graph } from '@antv/x6';
-import { Select } from 'antd';
+import { Select, message } from 'antd';
 import ELBuilder from '../../../model/builder';
 import { MIN_ZOOM } from '../../../constant';
 import { setModel } from '../../../hooks/useModel';
 import { history } from '../../../hooks/useHistory';
 import styles from './index.module.less';
-import { getRequest } from '../../../utils/httpUtils';
+import { getChainDetail, getChainList } from '../../../constant/api';
 
 interface IProps {
   flowGraph: Graph;
@@ -17,13 +17,15 @@ const Mock: React.FC<IProps> = (props) => {
   const [selectedValue, setSelectedValue] = useState<string>('');
   const [chainOptions, setChainOptions] = useState<any[]>([]);
 
+  const [messageApi, contextHolder] = message.useMessage()
+
   const handleOnChange = (value: string) => {
-    getChainDetail(value);
+    getChainDetails(value);
     setSelectedValue(value);
   };
 
-  const getChainDetail = (cinaId: string) => {
-    getRequest("http://localhost:10005/v1/liteflow/api/chainDetail?chainId=" + cinaId).then((res) => {
+  const getChainDetails = (cinaId: string) => {
+    getChainDetail({chainId: cinaId}).then((res) => {
       let data : any = {
         "type": res.type,
         "children": res.children,
@@ -36,11 +38,12 @@ const Mock: React.FC<IProps> = (props) => {
       flowGraph.zoomToFit({ minScale: MIN_ZOOM, maxScale: 1 });
     }).catch(err => {
       console.log(err);
+      messageApi.error("查询流程详情失败:" + err.response?.data?.message);
     })
   }
 
   const getAllChain = () => {
-    getRequest("http://localhost:10005/v1/liteflow/api/chainList").then((res) => {
+    getChainList().then((res) => {
         let options: any[] = [];
         for (let opt of res) {
           options.push({
@@ -50,7 +53,7 @@ const Mock: React.FC<IProps> = (props) => {
         }
         setChainOptions(options);
     }).catch(err => {
-      console.log(err);
+      messageApi.error("查询流程列表失败:" + err.response?.data?.message);
     })
   }
 
@@ -60,6 +63,7 @@ const Mock: React.FC<IProps> = (props) => {
 
   return (
     <div className={styles.zoomContainer} style={{ margin: '0 8px' }}>
+      { contextHolder }
       <span>流程数据：</span>
       <Select
         placeholder="请选择流程数据"

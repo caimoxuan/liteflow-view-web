@@ -18,11 +18,7 @@
     "lint:es": "eslint \"{src,test}/**/*.{js,jsx,ts,tsx}\"",
     "prepublishOnly": "father doctor && npm run build"
   },
-  "authors": [
-    "shijiangjiayou@163.com",
-    "wu_qingwan@126.com",
-    "dogsong99@163.com"
-  ],
+  "authors": [],
   "license": "MIT",
   "files": [
     "dist"
