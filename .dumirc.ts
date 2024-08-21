@@ -4,9 +4,8 @@ export default defineConfig({
   favicons: [
     './images/favicon.png',
   ],
-  // runtimePublicPath: {
-  //   publicPath: "/liteflow/"
-  // },
+  history: {type: "hash"},
+  // runtimePublicPath: {},
   // publicPath: "/liteflow/",
   // base: "/liteflow/",
   outputPath: 'docs-dist',

@@ -180,12 +180,13 @@ const ComponentPropertiesEditor: React.FC<IProps> = (props) => {
             onChange={(value, viewupdate) => {
               setCurrentExtension({
                 ...currentExtension,
-                scriptTxt: value
+                scriptText: value
               });
             }}
           />
           <Select
             defaultValue={currentExtension.scriptType || 'lua'}
+            value={currentExtension.scriptType}
             style={{ width: 120, marginTop: 10 }}
             onChange={lanChange}
             options={[
