@@ -71,14 +71,22 @@ const ComponentPropertiesEditor: React.FC<IProps> = (props) => {
     }
     if (shouldUpdate) {
       updateExtension(data).then((res) => {
-        extensionInfoDrawerClose();
+        if (res === "success") {
+          extensionInfoDrawerClose();
+        } else {
+          messageApi.error("修改扩展点失败:" + res);
+        }
       }).catch(err => {
         console.log(err);
         messageApi.error("修改扩展点失败:" + err.response?.data?.message);
       })
     } else {
       createExtension(data).then((res) => {
-        extensionInfoDrawerClose();
+        if (res === "success") {
+          extensionInfoDrawerClose();
+        } else {
+          messageApi.error("新增扩展点失败:" + res);
+        }
       }).catch(err => {
         console.log(err);
         messageApi.error("新增扩展点失败:" + err.response?.data?.message);
