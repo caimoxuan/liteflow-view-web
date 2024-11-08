@@ -5,6 +5,7 @@ import { history } from '../../../hooks/useHistory';
 import ELNode from '../../../model/node';
 import styles from './index.module.less';
 import {  getExtensionDetail, getNodeDetail, updateExtension, createExtension } from "../../../constant/api/index"
+import { CmpInfo } from '../../../common/store';
 import CodeMirror from '@uiw/react-codemirror'
 import {formatter, placeholderScript } from '../../../constant/script'
 
@@ -22,6 +23,7 @@ const ComponentPropertiesEditor: React.FC<IProps> = (props) => {
   const [messageApi, contextHolder] = message.useMessage();
 
   const [extensionInfos, setExtensionInfos] = useState<any[]>([]);
+  const [cmpInfoList, setCmpLists] = useState<any[]>([]);
   const [shouldUpdate, setShouldUpdate] = useState<Boolean>(false);
   const [currentExtension, setCurrentExtension] = useState<any>({});
   const [showExtensionDrawer, setShowExtensionDrawer] = useState<boolean>(false);
@@ -132,6 +134,9 @@ const ComponentPropertiesEditor: React.FC<IProps> = (props) => {
   }, 200);
 
   useEffect(() => {
+    CmpInfo.getCmpList().then(res => {
+      setCmpLists(res);
+    })
     if (model.getExtensions() > 0) {
       getNodeDetail({nodeId: model.id}).then((res) => {
         setExtensionInfos(res.extensions);
@@ -151,7 +156,17 @@ const ComponentPropertiesEditor: React.FC<IProps> = (props) => {
         onValuesChange={handleOnChange}
       >
         <Form.Item name="id" label="组件名">
-          <Input allowClear />
+          <Select 
+            options={cmpInfoList.map(c => {
+              return {
+                value: c.cmpId,
+                label: c.cmpId
+              }
+            })}
+            filterOption={(input, option) =>
+              (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+            }
+          />
         </Form.Item>
         <Form.Item name={['properties', 'tag']} label="标签（tag）">
           <Input allowClear />
